@@ -47,8 +47,8 @@ Calculate the tax amount for a given province and pre-tax amount.
 
 ```javascript
 const calculation = await lunio.tax.calculate({
-  province: 'NL', // Required: Province code (e.g., 'NL', 'ON')
-  amount: 100     // Required: Pre-tax amount (number)
+  province_code: 'NL', // Required: Province code (e.g., 'NL', 'ON')
+  amount: 100           // Required: Pre-tax amount (number)
 });
 
 console.log(calculation);
@@ -60,8 +60,8 @@ Calculate the pre-tax amount from a total including tax.
 
 ```javascript
 const reverse = await lunio.tax.reverse({
-  province: 'NL', // Required: Province code
-  total: 115      // Required: Total amount including tax (number)
+  province_code: 'NL', // Required: Province code
+  total: 115            // Required: Total amount including tax (number)
 });
 
 console.log(reverse);

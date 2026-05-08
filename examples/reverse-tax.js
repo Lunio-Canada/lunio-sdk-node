@@ -6,10 +6,10 @@ const lunio = new Lunio(apiKey);
 
 async function reverseTax() {
   try {
-    const reverse = await lunio.tax.reverse({
-      province: 'NL',
-      total: 115
-    });
+const reverse = await lunio.tax.reverse({
+  province_code: 'NL',
+  total: 115
+});
     console.log('Reverse tax calculation:', reverse);
   } catch (error) {
     console.error('Error:', error.message);

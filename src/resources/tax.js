@@ -9,23 +9,23 @@ export class Tax {
     return this.client.request('GET', '/tax/rates');
   }
 
-  async calculate({ province, amount }) {
-    if (!province || typeof province !== 'string') {
-      throw new LunioSDKError('Province is required and must be a string');
+  async calculate({ province_code, amount }) {
+    if (!province_code || typeof province_code !== 'string') {
+      throw new LunioSDKError('Province code is required and must be a string');
     }
     if (typeof amount !== 'number' || isNaN(amount)) {
       throw new LunioSDKError('Amount is required and must be a number');
     }
-    return this.client.request('POST', '/tax/calculate', { province, amount });
+    return this.client.request('POST', '/tax/calculate', { province_code, amount });
   }
 
-  async reverse({ province, total }) {
-    if (!province || typeof province !== 'string') {
-      throw new LunioSDKError('Province is required and must be a string');
+  async reverse({ province_code, total }) {
+    if (!province_code || typeof province_code !== 'string') {
+      throw new LunioSDKError('Province code is required and must be a string');
     }
     if (typeof total !== 'number' || isNaN(total)) {
       throw new LunioSDKError('Total is required and must be a number');
     }
-    return this.client.request('POST', '/tax/reverse', { province, total });
+    return this.client.request('POST', '/tax/reverse', { province_code, total });
   }
 }

@@ -6,10 +6,10 @@ const lunio = new Lunio(apiKey);
 
 async function calculateTax() {
   try {
-    const calculation = await lunio.tax.calculate({
-      province: 'NL',
-      amount: 100
-    });
+const calculation = await lunio.tax.calculate({
+  province_code: 'NL',
+  amount: 100
+});
     console.log('Tax calculation:', calculation);
   } catch (error) {
     console.error('Error:', error.message);
