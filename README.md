@@ -74,7 +74,9 @@ You can pass an optional configuration object to customize the SDK behavior:
 ```javascript
 const lunio = new Lunio('your_api_key', {
   baseUrl: 'https://lunio.ca/api/v1', // Override the default base URL
-  timeoutMs: 30000                     // Request timeout in milliseconds
+  timeoutMs: 30000,                   // Request timeout in milliseconds (default: 30000)
+  maxRetries: 2,                      // Maximum retry attempts for transient failures (default: 2)
+  debug: false                        // Enable debug logging (default: false)
 });
 ```
 
@@ -87,7 +89,8 @@ try {
   const rates = await lunio.tax.getRates();
 } catch (error) {
   if (error.name === 'LunioAPIError') {
-    console.log('API Error:', error.status, error.code, error.details);
+    console.log('API Error:', error.status, error.code, error.details, error.requestId);
+    console.log('Response body:', error.body);
   } else if (error.name === 'LunioSDKError') {
     console.log('SDK Error:', error.message);
   } else {

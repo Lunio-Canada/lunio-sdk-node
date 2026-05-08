@@ -3,8 +3,7 @@ import { Tax } from './resources/tax.js';
 
 export class Lunio {
   constructor(apiKey, config = {}) {
-    const { baseUrl, timeoutMs } = config;
-    this.client = new Client(apiKey, baseUrl, timeoutMs);
+    this.client = new Client(apiKey, config);
     this.tax = new Tax(this.client);
   }
 }

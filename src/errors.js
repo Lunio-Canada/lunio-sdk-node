@@ -1,11 +1,12 @@
 export class LunioAPIError extends Error {
-  constructor(message, status, code = null, details = null, body = null) {
+  constructor(message, status, code = null, details = null, body = null, requestId = null) {
     super(message);
     this.name = 'LunioAPIError';
     this.status = status;
     this.code = code;
     this.details = details;
     this.body = body;
+    this.requestId = requestId;
   }
 }
 

@@ -1,6 +1,6 @@
 import Lunio from '../src/index.js';
 
-const apiKey = process.env.LUNIO_API_KEY || 'ln_live_your_api_key';
+const lunio = new Lunio(process.env.LUNIO_API_KEY || 'ln_live_your_api_key');
 
 const lunio = new Lunio(apiKey);
 

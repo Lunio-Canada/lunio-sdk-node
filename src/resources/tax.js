@@ -13,8 +13,8 @@ export class Tax {
     if (!province_code || typeof province_code !== 'string') {
       throw new LunioSDKError('Province code is required and must be a string');
     }
-    if (typeof amount !== 'number' || isNaN(amount)) {
-      throw new LunioSDKError('Amount is required and must be a number');
+    if (typeof amount !== 'number' || !isFinite(amount)) {
+      throw new LunioSDKError('Amount is required and must be a finite number');
     }
     return this.client.request('POST', '/tax/calculate', { province_code, amount });
   }
@@ -23,8 +23,8 @@ export class Tax {
     if (!province_code || typeof province_code !== 'string') {
       throw new LunioSDKError('Province code is required and must be a string');
     }
-    if (typeof total !== 'number' || isNaN(total)) {
-      throw new LunioSDKError('Total is required and must be a number');
+    if (typeof total !== 'number' || !isFinite(total)) {
+      throw new LunioSDKError('Total is required and must be a finite number');
     }
     return this.client.request('POST', '/tax/reverse', { province_code, total });
   }
