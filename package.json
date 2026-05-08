@@ -1,8 +1,9 @@
 {
   "name": "@lunio-canada/sdk",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Official Node.js SDK for the Lunio Developer API.",
   "type": "module",
+  "types": "types/index.d.ts",
   "exports": {
     ".": "./src/index.js"
   },
@@ -12,6 +13,7 @@
   },
   "files": [
     "src/",
+    "types/",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"

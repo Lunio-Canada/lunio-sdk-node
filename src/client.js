@@ -1,6 +1,13 @@
 import { LunioAPIError, LunioSDKError } from './errors.js';
 
+/**
+ * Internal HTTP client for making API requests.
+ */
 export class Client {
+  /**
+   * @param {string} apiKey - API key.
+   * @param {import('../types/index.d.ts').LunioConfig} config - Configuration.
+   */
   constructor(apiKey, config = {}) {
     if (!apiKey) {
       throw new LunioSDKError('API key is required');

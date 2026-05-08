@@ -4,11 +4,17 @@ The official Node.js SDK for the Lunio Developer API. This SDK provides a clean,
 
 This package is intended to be published as `@lunio-canada/sdk` on npm.
 
+## TypeScript Support
+
+This SDK includes TypeScript declarations for full type safety and autocomplete support. No additional dependencies required.
+
 ## Installation
 
 ```bash
 npm install @lunio-canada/sdk
 ```
+
+The SDK is compatible with both JavaScript and TypeScript projects.
 
 ## Requirements
 
@@ -65,6 +71,28 @@ const reverse = await lunio.tax.reverse({
 });
 
 console.log(reverse);
+```
+
+### TypeScript Usage
+
+```typescript
+import Lunio, { LunioConfig } from '@lunio-canada/sdk';
+
+const config: LunioConfig = {
+  timeoutMs: 10000,
+  maxRetries: 3,
+  debug: true
+};
+
+const lunio = new Lunio('your_api_key', config);
+
+async function calculateTax() {
+  const result = await lunio.tax.calculate({
+    province_code: 'NL',
+    amount: 100
+  });
+  console.log(result);
+}
 ```
 
 ## Configuration
