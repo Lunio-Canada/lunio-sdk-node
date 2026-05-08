@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-05-08
+
+### Added
+- SDK User-Agent header with version
+- Middleware/interceptor support for requests and responses
+- Request metadata support (_meta property in debug mode)
+- Improved retry logging and visibility
+- SDK utility helpers (isLunioAPIError, formatError, getRequestId)
+- Enhanced package architecture for future extensibility
+
+### Changed
+- Improved response normalization
+- Better debug mode logging
+- Enhanced README with middleware and utility documentation
+
 ## [0.3.0] - 2026-05-08
 
 ### Added

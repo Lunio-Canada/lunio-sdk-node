@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import { LunioAPIError, LunioSDKError } from './errors.js';
 
 /**
@@ -12,27 +13,44 @@ export class Client {
     if (!apiKey) {
       throw new LunioSDKError('API key is required');
     }
-    const { baseUrl = 'https://lunio.ca/api/v1', timeoutMs = 30000, maxRetries = 2, debug = false } = config;
+    const { baseUrl = 'https://lunio.ca/api/v1', timeoutMs = 30000, maxRetries = 2, debug = false, middlewares = [] } = config;
     this.apiKey = apiKey;
     this.baseUrl = baseUrl;
     this.timeoutMs = timeoutMs;
     this.maxRetries = maxRetries;
     this.debug = debug;
+    this.middlewares = middlewares;
+
+    // Read version from package.json
+    try {
+      const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url)));
+      this.version = pkg.version;
+    } catch {
+      this.version = 'unknown';
+    }
   }
 
   async request(method, path, body = null) {
     const url = `${this.baseUrl}${path}`;
+    const headers = {
+      'Authorization': `Bearer ${this.apiKey}`,
+      'Content-Type': 'application/json',
+      'User-Agent': `@lunio-canada/sdk/${this.version}`,
+    };
+
     if (this.debug) {
       console.log(`[Lunio SDK] ${method} ${url}`);
     }
 
-    let attempt = 0;
-    while (attempt <= this.maxRetries) {
-      const headers = {
-        'Authorization': `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json',
-      };
+    // Middleware before request
+    const ctx = { request: { method, url, headers: { ...headers }, body }, response: null };
+    for (const mw of this.middlewares) {
+      await mw(ctx, () => {});
+    }
 
+    let attempt = 0;
+    let finalResponse = null;
+    while (attempt <= this.maxRetries) {
       const options = {
         method,
         headers,
@@ -46,47 +64,68 @@ export class Client {
       const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
       options.signal = controller.signal;
 
-      let response = null;
       try {
-        response = await fetch(url, options);
+        finalResponse = await fetch(url, options);
         clearTimeout(timeoutId);
 
-        const requestId = response.headers.get('x-request-id') || response.headers.get('x-lunio-request-id');
+        const requestId = finalResponse.headers.get('x-request-id') || finalResponse.headers.get('x-lunio-request-id');
+        ctx.response = {
+          status: finalResponse.status,
+          headers: Object.fromEntries(finalResponse.headers),
+          requestId,
+          retryCount: attempt
+        };
 
-        if (!response.ok) {
+        if (!finalResponse.ok) {
           let errorData = null;
           try {
-            errorData = await response.json();
+            errorData = await finalResponse.json();
           } catch (e) {
             // Ignore JSON parse errors
           }
           const apiError = new LunioAPIError(
-            `API request failed: ${response.status} ${response.statusText}`,
-            response.status,
+            `API request failed: ${finalResponse.status} ${finalResponse.statusText}`,
+            finalResponse.status,
             errorData?.code,
             errorData?.details,
             errorData,
             requestId
           );
 
-          if (this.isRetryable(response.status)) {
+          if (this.isRetryable(finalResponse.status)) {
             if (attempt < this.maxRetries) {
               attempt++;
               if (this.debug) {
-                console.log(`[Lunio SDK] Retry ${attempt}/${this.maxRetries} for ${response.status}`);
+                console.log(`[Lunio SDK] Retry ${attempt}/${this.maxRetries} for ${finalResponse.status}`);
               }
               await this.delay(100 * Math.pow(2, attempt - 1));
               continue;
+            } else {
+              if (this.debug) {
+                console.log(`[Lunio SDK] Max retries exhausted for ${finalResponse.status}`);
+              }
             }
           }
           throw apiError;
         }
 
         if (this.debug) {
-          console.log(`[Lunio SDK] Response ${response.status}`);
+          console.log(`[Lunio SDK] Response ${finalResponse.status}`);
         }
 
-        return await response.json();
+        const data = await finalResponse.json();
+
+        // Middleware after response
+        ctx.response.body = data;
+        for (const mw of [...this.middlewares].reverse()) {
+          await mw(ctx, () => {});
+        }
+
+        // Add metadata if debug
+        if (this.debug) {
+          return { ...data, _meta: { requestId, status: finalResponse.status, headers: ctx.response.headers, retryCount: attempt } };
+        }
+        return data;
       } catch (error) {
         clearTimeout(timeoutId);
         if (error.name === 'AbortError') {
@@ -104,6 +143,10 @@ export class Client {
             }
             await this.delay(100 * Math.pow(2, attempt - 1));
             continue;
+          } else {
+            if (this.debug) {
+              console.log(`[Lunio SDK] Max retries exhausted for network error`);
+            }
           }
         }
         throw new LunioSDKError(`Network error: ${error.message}`);

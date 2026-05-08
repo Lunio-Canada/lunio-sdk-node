@@ -13,10 +13,21 @@ export interface LunioConfig {
 }
 
 /**
+ * Request metadata.
+ */
+export interface RequestMetadata {
+  requestId?: string;
+  status: number;
+  headers: Record<string, string>;
+  retryCount: number;
+}
+
+/**
  * Response from the tax rates endpoint.
  */
 export interface TaxRatesResponse {
   [key: string]: any;
+  _meta?: RequestMetadata;
 }
 
 /**
@@ -24,6 +35,7 @@ export interface TaxRatesResponse {
  */
 export interface TaxCalculateResponse {
   [key: string]: any;
+  _meta?: RequestMetadata;
 }
 
 /**
@@ -31,6 +43,7 @@ export interface TaxCalculateResponse {
  */
 export interface TaxReverseResponse {
   [key: string]: any;
+  _meta?: RequestMetadata;
 }
 
 /**
@@ -52,6 +65,30 @@ export interface LunioAPIErrorShape {
 }
 
 /**
+ * Middleware context.
+ */
+export interface MiddlewareContext {
+  request: {
+    method: string;
+    url: string;
+    headers: Record<string, string>;
+    body?: any;
+  };
+  response: {
+    status: number;
+    headers: Record<string, string>;
+    requestId?: string;
+    retryCount: number;
+    body?: any;
+  } | null;
+}
+
+/**
+ * Middleware function type.
+ */
+export type Middleware = (ctx: MiddlewareContext, next: () => Promise<void>) => Promise<void>;
+
+/**
  * Main Lunio SDK class.
  */
 export declare class Lunio {
@@ -64,6 +101,12 @@ export declare class Lunio {
 
   /** Tax-related API methods. */
   tax: Tax;
+
+  /**
+   * Add middleware for request/response interception.
+   * @param fn - Middleware function.
+   */
+  use(fn: Middleware): void;
 }
 
 /**
@@ -118,5 +161,25 @@ export declare class LunioAPIError extends Error {
 export declare class LunioSDKError extends Error {
   constructor(message: string);
 }
+
+/**
+ * Check if an error is a LunioAPIError.
+ */
+export declare function isLunioAPIError(error: any): error is LunioAPIError;
+
+/**
+ * Check if an error is a LunioSDKError.
+ */
+export declare function isLunioSDKError(error: any): error is LunioSDKError;
+
+/**
+ * Format an error for logging or display.
+ */
+export declare function formatError(error: Error): string;
+
+/**
+ * Extract request ID from a LunioAPIError.
+ */
+export declare function getRequestId(error: LunioAPIError): string | null;
 
 export default Lunio;

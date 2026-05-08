@@ -108,6 +108,44 @@ const lunio = new Lunio('your_api_key', {
 });
 ```
 
+## Middleware
+
+Add request/response interceptors for logging, metrics, or custom behavior:
+
+```javascript
+lunio.use(async (ctx, next) => {
+  console.log(`Request: ${ctx.request.method} ${ctx.request.url}`);
+  await next();
+  if (ctx.response) {
+    console.log(`Response: ${ctx.response.status}`);
+  }
+});
+```
+
+## Request Metadata
+
+When debug mode is enabled, responses include a `_meta` property with request details:
+
+```javascript
+const rates = await lunio.tax.getRates();
+// rates._meta = { requestId, status, headers, retryCount }
+```
+
+## Utility Helpers
+
+```javascript
+import { isLunioAPIError, formatError, getRequestId } from '@lunio-canada/sdk';
+
+try {
+  // ...
+} catch (error) {
+  if (isLunioAPIError(error)) {
+    console.log(formatError(error)); // Formatted error string
+    console.log('Request ID:', getRequestId(error));
+  }
+}
+```
+
 ## Error Handling
 
 The SDK throws custom errors for better error handling:
