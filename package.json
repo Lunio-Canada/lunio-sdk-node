@@ -1,0 +1,33 @@
+{
+  "name": "@lunio/sdk",
+  "version": "0.1.0",
+  "description": "Official Node.js SDK for the Lunio Developer API.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "lint": "echo 'No linter configured'"
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "keywords": ["lunio", "api", "sdk", "node", "tax", "canada", "gst", "hst", "developer-api"],
+  "author": "Lunio",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lunio-Canada/lunio-sdk-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Lunio-Canada/lunio-sdk-node/issues"
+  },
+  "homepage": "https://github.com/Lunio-Canada/lunio-sdk-node#readme"
+}

@@ -1,2 +1,105 @@
-# lunio-sdk-node
-Official Node.js SDK for the Lunio Developer API.
+# Lunio SDK for Node.js
+
+The official Node.js SDK for the Lunio Developer API. This SDK provides a clean, production-ready interface for interacting with the Lunio API, allowing developers to integrate Canadian tax calculations without manually writing fetch requests.
+
+This package is intended to be published as `@lunio/sdk` on npm.
+
+## Installation
+
+```bash
+npm install @lunio/sdk
+```
+
+## Requirements
+
+- Node.js 18+
+
+## Authentication
+
+All API requests require authentication using a Bearer token. You can obtain an API key from your Lunio dashboard.
+
+```javascript
+import Lunio from '@lunio/sdk';
+
+const lunio = new Lunio('ln_live_your_api_key');
+```
+
+Or using environment variables:
+
+```javascript
+const lunio = new Lunio(process.env.LUNIO_API_KEY);
+```
+
+## Usage
+
+### Get Tax Rates
+
+Retrieve the current Canadian tax rates for all provinces.
+
+```javascript
+const rates = await lunio.tax.getRates();
+console.log(rates);
+```
+
+### Calculate Tax
+
+Calculate the tax amount for a given province and pre-tax amount.
+
+```javascript
+const calculation = await lunio.tax.calculate({
+  province: 'NL', // Required: Province code (e.g., 'NL', 'ON')
+  amount: 100     // Required: Pre-tax amount (number)
+});
+
+console.log(calculation);
+```
+
+### Reverse Calculate Tax
+
+Calculate the pre-tax amount from a total including tax.
+
+```javascript
+const reverse = await lunio.tax.reverse({
+  province: 'NL', // Required: Province code
+  total: 115      // Required: Total amount including tax (number)
+});
+
+console.log(reverse);
+```
+
+## Configuration
+
+You can pass an optional configuration object to customize the SDK behavior:
+
+```javascript
+const lunio = new Lunio('your_api_key', {
+  baseUrl: 'https://lunio.ca/api/v1', // Override the default base URL
+  timeoutMs: 30000                     // Request timeout in milliseconds
+});
+```
+
+## Error Handling
+
+The SDK throws custom errors for better error handling:
+
+```javascript
+try {
+  const rates = await lunio.tax.getRates();
+} catch (error) {
+  if (error.name === 'LunioAPIError') {
+    console.log('API Error:', error.status, error.code, error.details);
+  } else if (error.name === 'LunioSDKError') {
+    console.log('SDK Error:', error.message);
+  } else {
+    console.log('Unexpected error:', error.message);
+  }
+}
+```
+
+## API Base URL
+
+The default API base URL is `https://lunio.ca/api/v1`.
+
+## License
+
+MIT
