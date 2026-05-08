@@ -2,12 +2,12 @@
 
 The official Node.js SDK for the Lunio Developer API. This SDK provides a clean, production-ready interface for interacting with the Lunio API, allowing developers to integrate Canadian tax calculations without manually writing fetch requests.
 
-This package is intended to be published as `@lunio/sdk` on npm.
+This package is intended to be published as `@lunio-canada/sdk` on npm.
 
 ## Installation
 
 ```bash
-npm install @lunio/sdk
+npm install @lunio-canada/sdk
 ```
 
 ## Requirements
@@ -19,7 +19,7 @@ npm install @lunio/sdk
 All API requests require authentication using a Bearer token. You can obtain an API key from your Lunio dashboard.
 
 ```javascript
-import Lunio from '@lunio/sdk';
+import Lunio from '@lunio-canada/sdk';
 
 const lunio = new Lunio('ln_live_your_api_key');
 ```
